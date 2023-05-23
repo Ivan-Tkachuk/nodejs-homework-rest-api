@@ -58,3 +58,4 @@ module.exports = {
   updateFavorite: ctrlWrapper(updateFavorite),
   removeContact: ctrlWrapper(removeContact),
 };
+
