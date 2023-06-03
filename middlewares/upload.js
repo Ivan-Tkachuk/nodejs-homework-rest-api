@@ -10,8 +10,6 @@ const mupterConfig = multer.diskStorage({
   },
 });
 
-console.log(tempDir);
-
 const upload = multer({
   storage: mupterConfig,
 });
