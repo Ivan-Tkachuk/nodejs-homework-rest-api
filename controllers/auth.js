@@ -4,8 +4,7 @@ const gravatar = require("gravatar");
 const path = require("path");
 const fs = require("fs/promises");
 const Jimp = require("jimp");
-const {nanoid} = require("nanoid");
-
+const { nanoid } = require("nanoid");
 
 const { User } = require("../models/user");
 const { HttpError, sendEmail } = require("../helpers");
@@ -37,8 +36,8 @@ const register = async (req, res) => {
   const verifyEmail = {
     to: email,
     subject: "Verify email",
-    html: `<a target="_blank" href="${PROJECT_URL}/api/auth/verify/${verificationToken}">Click to verify email</a>`
-  }
+    html: `<a target="_blank" href="${PROJECT_URL}/api/auth/verify/${verificationToken}">Click to verify email</a>`,
+  };
 
   await sendEmail(verifyEmail);
 
@@ -48,44 +47,45 @@ const register = async (req, res) => {
   });
 };
 
-
-const verify = async(req, res) => {
-  const {verificationToken} = req.params;
-  const user = await User.findOne({verificationToken});
-  if(!user) {
+const verify = async (req, res) => {
+  const { verificationToken } = req.params;
+  const user = await User.findOne({ verificationToken });
+  if (!user) {
     throw HttpError(404);
   }
-  await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: ""});
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verificationToken: "",
+  });
 
   res.json({
-    message:"Verify success"
-  })
-}
+    message: "Verify success",
+  });
+};
 
-const resendVerifyEmail = async(req, res) => {
-  const {email} = req.body;
-  const user = await User.findOne({email});
+const resendVerifyEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
   console.log(email);
-  if(!user) {
-    throw HttpError(404, "missing required field email");
+  if (!user) {
+    throw HttpError(400, "missing required field email");
   }
-  if(user.verify) {
-    throw HttpError(400,"Verification has already been passed")
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
   }
 
   const verifyEmail = {
     to: email,
     subject: "Verify email",
-    html: `<a target="_blank" href="${PROJECT_URL}/api/auth/verify/${user.verificationToken}">Click to verify email</a>`
+    html: `<a target="_blank" href="${PROJECT_URL}/api/auth/verify/${user.verificationToken}">Click to verify email</a>`,
   };
 
   await sendEmail(verifyEmail);
 
   res.json({
-    message: "Verification email sent"
-  })
-}
-
+    message: "Verification email sent",
+  });
+};
 
 const login = async (req, res) => {
   const { email, password } = req.body;
